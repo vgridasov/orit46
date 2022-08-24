@@ -23,6 +23,7 @@ ALLOWED_HOSTS = ['orit.obuzkomkb.ru', 'obuzkomkb.ru', '127.0.0.1']
 # Application definition
 
 INSTALLED_APPS = [
+    'mo.apps.MoConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
