@@ -71,3 +71,8 @@ class StaffModel(models.Model):
 
     def __str__(self):
         return '%s %s' % (self.title, self.fio)
+
+    class Meta:
+        ordering = ['fio']
+        verbose_name = 'Сотрудник'
+        verbose_name_plural = 'Сотрудники'

@@ -16,4 +16,17 @@ class MOModelAdmin(admin.ModelAdmin):
     list_display_links = ('sn', 'name',)
 
 
+
 admin.site.register(MOModel, MOModelAdmin)
+
+
+class StaffModelAdmin(admin.ModelAdmin):
+    list_display = (
+        'title',
+        'fio',
+        'user',
+        'is_fired',
+    )
+
+
+admin.site.register(StaffModel, StaffModelAdmin)
