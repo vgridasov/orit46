@@ -57,22 +57,84 @@ class MOModel(models.Model):
         verbose_name_plural = 'Мед.организации'
 
 
+class MOUnitModel(models.Model):
+    mo = models.ForeignKey(
+        MOModel,
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        verbose_name='Организация')
+    parent = models.ForeignKey(
+        'self',
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        verbose_name='Вышест.подр.'
+    )
+    sn = models.CharField(max_length=10, null=True, blank=True, verbose_name='Номер п/п')
+    shortname = models.CharField(max_length=20, verbose_name='Сокр.наименование')
+    name = models.CharField(max_length=120, verbose_name='Наименование')
+    is_active = models.BooleanField(default=True, verbose_name='Действующее')
+
+    def __str__(self):
+        return '%s (%s)' % (self.shortname, self.name)
+
+    class Meta:
+        ordering = ['sn', 'name']
+        verbose_name = 'Подразделение'
+        verbose_name_plural = 'Подразделения'
+
+
 class StaffModel(models.Model):
     title = models.CharField(max_length=100, verbose_name='Должность')
     fio = models.CharField(max_length=100, verbose_name='ФИО')
     phone = models.CharField(max_length=20, verbose_name='Контактный телефон')
+    email = models.EmailField(null=True, blank=True, verbose_name='E-mail')
     user = models.ForeignKey(
         User,
         on_delete=models.PROTECT,
         null=True,
         verbose_name='Пользователь'
     )
-    is_fired = models.BooleanField(default=False, verbose_name='Уволен')
+    mo = models.ForeignKey(
+        MOModel,
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        verbose_name='Организация')
+    mo_unit = models.ForeignKey(
+        MOUnitModel,
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        verbose_name='Подразделение'
+    )
+    is_fired = models.BooleanField(default=True, verbose_name='Действующий')
 
     def __str__(self):
-        return '%s %s' % (self.title, self.fio)
+        return '%s: %s' % (self.title, self.fio)
 
     class Meta:
         ordering = ['fio']
+        verbose_name = 'Сотрудник'
+        verbose_name_plural = 'Сотрудники'
+
+
+class BedSpaceNumberModel(models.Model):
+    edit_date = models.DateField(auto_now=True, verbose_name='Дата изм.')
+    mo = models.ForeignKey(
+        MOModel,
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        verbose_name='Организация')
+    mo_unit = models.ForeignKey(
+        MOUnitModel,
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        verbose_name='Подразделение'
+    )
+    num = models.SmallIntegerField(verbose_name='Кол-во коек')
+
+    def __str__(self):
+        return '%s: %s - %s' % (self.edit_date, self.mo, self.num)
+
+    class Meta:
+        ordering = ['-edit_date']
         verbose_name = 'Сотрудник'
         verbose_name_plural = 'Сотрудники'

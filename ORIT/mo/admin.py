@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import MOModel, StaffModel
+from .models import MOModel, StaffModel, MOUnitModel
 
 
 class MOModelAdmin(admin.ModelAdmin):
@@ -16,17 +16,21 @@ class MOModelAdmin(admin.ModelAdmin):
     list_display_links = ('sn', 'name',)
 
 
-
-admin.site.register(MOModel, MOModelAdmin)
-
-
 class StaffModelAdmin(admin.ModelAdmin):
     list_display = (
         'title',
         'fio',
         'user',
         'is_fired',
+        'mo',
+    )
+    list_display_links = (
+        'title',
+        'fio',
     )
 
 
+admin.site.register(MOModel, MOModelAdmin)
+admin.site.register(MOUnitModel)
 admin.site.register(StaffModel, StaffModelAdmin)
+
