@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import MOModel, StaffModel, MOUnitModel
+from .models import MOModel, StaffModel, MOUnitModel, BedSpaceNumberModel
 
 
 class MOModelAdmin(admin.ModelAdmin):
@@ -33,4 +33,5 @@ class StaffModelAdmin(admin.ModelAdmin):
 admin.site.register(MOModel, MOModelAdmin)
 admin.site.register(MOUnitModel)
 admin.site.register(StaffModel, StaffModelAdmin)
+admin.site.register(BedSpaceNumberModel)
 

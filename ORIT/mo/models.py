@@ -136,5 +136,5 @@ class BedSpaceNumberModel(models.Model):
 
     class Meta:
         ordering = ['-edit_date']
-        verbose_name = 'Сотрудник'
-        verbose_name_plural = 'Сотрудники'
+        verbose_name = 'Коечный фонд'
+        verbose_name_plural = 'Коечный фонд'
