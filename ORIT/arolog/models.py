@@ -73,7 +73,7 @@ class AROLogModel(models.Model):
         verbose_name='Динамика состояния'
     )
 
-    note = models.TextField(verbose_name='Примечания')
+    note = models.TextField(null=True, blank=True, verbose_name='Примечания')
 
     def __str__(self):
         return '%s: %s лет' % (self.mh_num, self.age)
