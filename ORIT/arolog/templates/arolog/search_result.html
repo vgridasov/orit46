@@ -1,0 +1,48 @@
+
+{% if object_list %}
+
+<div class="table-responsive">
+<table class="table table-striped table-sm">
+    {% for ob in object_list %}
+    <tr>
+        <td>
+            <a href="/arolog/{{ ob.id }}/">
+            {{ ob.mh_num }}
+            </a>
+        </td>
+        <td style="text-align: center;">
+            {{ ob.age }}
+        </td>
+        <td>
+            {{ ob.to_hosp_date|date }}
+        </td>
+        <td>
+            {{ ob.to_unit_date|date }}
+        </td>
+        <td>
+            {{ ob.oper_date }}
+        </td>
+        <td>
+            {{ ob.oper_name }}
+        </td>
+
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+</div>
+
+{% if page_obj.has_other_pages %}
+{% if page_obj.has_previous %}
+<a class="navlink" href="?page={{ page_obj.previous_page_number }}&q={{ request.GET.q }}">Предыдущая страница</a>
+{% endif %}
+
+{% if page_obj.has_next %}
+    <a class="navlink" href="?page={{ page_obj.next_page_number }}&q={{ request.GET.q }}">Следующая страница</a>
+{% endif %}
+
+{% endif %}
+
+{% else %}
+    <p>К сожалению, записей не найдено.</p>
+{% endif %}
