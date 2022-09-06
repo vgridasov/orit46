@@ -16,6 +16,12 @@ class AROLogModelAdmin(admin.ModelAdmin):
         'registrator',
     )
     list_display_links = ('mh_num',)
+    list_filter = (
+        'edit_datetime',
+        'to_unit_date',
+        's_dyn',
+        'registrator',
+    )
 
 
 admin.site.register(AROLogModel, AROLogModelAdmin)

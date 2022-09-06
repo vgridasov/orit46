@@ -21,10 +21,11 @@ class AListView(generic.ListView):
         return AROLogModel.objects.order_by('-edit_datetime')
 
 
-#@method_decorator(login_required, name='dispatch')
+# @method_decorator(login_required, name='dispatch')
 class ADetailView(generic.DetailView):
     model = AROLogModel
     template_name = 'arolog/arolog_detail.html'
+
 
 class SearchResultsView(generic.ListView):
     model = AROLogModel
