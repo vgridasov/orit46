@@ -24,8 +24,8 @@ class AROLogModel(models.Model):
     to_hosp_date = models.DateTimeField(default=timezone.now, verbose_name='Дата поступления в МО')
     to_unit_date = models.DateTimeField(default=timezone.now, verbose_name='Дата поступления в отделение')
     diagnosis = models.CharField(max_length=100, verbose_name='Основной диагноз')
-    oper_date = models.DateTimeField(default=timezone.now, verbose_name='Операция (дата-время завершения)')
-    oper_name = models.CharField(max_length=100, verbose_name='Операция (наименование)')
+    oper_date = models.DateTimeField(null=True, blank=True, verbose_name='Операция (дата-время завершения)')
+    oper_name = models.CharField(max_length=100, null=True, blank=True, verbose_name='Операция (наименование)')
 
     # Степень угнетения сознания (по Коновалову)
     MIND_CHOICES = [
