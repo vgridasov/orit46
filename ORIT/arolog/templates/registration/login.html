@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    {% load static %}
+
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Вход в систему</title>
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+
+</head>
+<body>
+ <div class="modal modal-signin position-static d-block bg-secondary py-5" tabindex="-1" role="dialog" id="modalSignin">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content rounded-5 shadow">
+      <div class="modal-header p-5 pb-4 border-bottom-0">
+        <!-- <h5 class="modal-title">Modal title</h5> -->
+        <h2 class="fw-bold mb-0">Введите имя пользователя и пароль</h2>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body p-5 pt-0">
+        <form method="post" class="">
+
+            {% csrf_token %}
+            <!-- #TODO: добавить возможность отмены входа и закрытия модального окна-->
+<!-- bootstrap style
+          <div class="form-floating mb-3">
+            <input type="text" class="form-control rounded-4" id="floatingInput" placeholder="Имя_пользователя">
+            <label for="floatingInput">Имя пользователя</label>
+          </div>
+          <div class="form-floating mb-3">
+            <input type="password" class="form-control rounded-4" id="floatingPassword" placeholder="Пароль">
+            <label for="floatingPassword">Пароль</label>
+          </div>
+          -->
+              {{ form.as_p }}
+          <button class="w-100 mb-2 btn btn-lg rounded-4 btn-primary" type="submit">Войти</button>
+          <small class="text-muted">После входа в систему вы несете ответственность за корректность введенных данных.</small>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
