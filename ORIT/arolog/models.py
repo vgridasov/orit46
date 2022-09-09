@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 from django.utils import timezone
 from mo.models import MOModel, MOUnitModel, StaffModel
 
@@ -74,6 +75,13 @@ class AROLogModel(models.Model):
     )
 
     note = models.TextField(null=True, blank=True, verbose_name='Примечания')
+
+    def get_absolute_url(self):
+        return reverse('detail', kwargs={'pk': self.pk})
+
+    def get_duration_of_stay(self):
+        dof = self.reg_datetime - self.to_unit_date
+        return dof.days
 
     def __str__(self):
         return '%s: %s лет' % (self.mh_num, self.age)
