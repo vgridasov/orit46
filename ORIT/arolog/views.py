@@ -5,6 +5,7 @@ from django.views import generic
 from .models import AROLogModel
 
 
+@method_decorator(login_required, name='dispatch')
 class Home(generic.ListView):
     template_name = 'arolog/home.html'
     context_object_name = 'latest_rec_list'
@@ -15,18 +16,20 @@ class Home(generic.ListView):
         return AROLogModel.objects.order_by('-edit_datetime')[:10]
 
 
+@method_decorator(login_required, name='dispatch')
 class AListView(generic.ListView):
-
+    paginate_by = 25
     def get_queryset(self):
         return AROLogModel.objects.order_by('-edit_datetime')
 
 
-# @method_decorator(login_required, name='dispatch')
+@method_decorator(login_required, name='dispatch')
 class ADetailView(generic.DetailView):
     model = AROLogModel
     template_name = 'arolog/arolog_detail.html'
 
 
+@method_decorator(login_required, name='dispatch')
 class SearchResultsView(generic.ListView):
     model = AROLogModel
     paginate_by = 25
