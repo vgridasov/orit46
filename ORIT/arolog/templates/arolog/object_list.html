@@ -27,7 +27,7 @@
     <tbody>
     {% for obj in object_list %}
 
-    <tr {% if obj.get_age < 16 %} class="table-info" {% endif %}><!-- #TODO: пометка возраста - для детей-->
+    <tr style="text-align: center;">
         <td>
             {{ obj.edit_datetime|date:"d M y g:i" }}
         </td>
