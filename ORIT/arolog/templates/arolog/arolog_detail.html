@@ -1,8 +1,10 @@
-<p>
-{{ object.reg_datetime|date }}
-</p>
- {{ object.mh_num }}
- {{ object.age }}
-<hr>
-<!-- какие сутки в реанимации? -->
-{{ object.get_duration_of_stay }} сутки в реанимации
+{% extends "arolog/wrapper.html" %}
+
+{% block title %}Список: Исследования{% endblock %}
+
+{% block content %}
+
+{% include 'arolog/object_detail.html' %}
+
+
+{% endblock %}
