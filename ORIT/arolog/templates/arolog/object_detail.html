@@ -7,7 +7,7 @@
 <p>История болезник №{{ object.mh_num }}; Возраст (лет): {{ object.age }}</p>
 <p>Дата поступления в МО: {{object.to_hosp_date|date:"D d M y g:i"}}</p>
 <p>Дата поступления в отделение: {{object.to_unit_date|date:"D d M y g:i"}}.<br>
- На дату записи [ {{ object.reg_datetime|date:"d M y" }} ] {{ object.get_duration_of_stay }}-е сутки в реанимации</p>
+ На дату записи [ {{ object.reg_datetime|date:"d M y" }} ] <b>{{ object.get_duration_of_stay }}-е сутки в реанимации</b></p>
 <p>Основной диагноз (MKБ-10): {{object.diagnosis}}</p>
 
 {% if object.oper_date %}
@@ -18,10 +18,4 @@
 <p>Статус ИВЛ: {{object.get_vent_display}}</p>
 <p>Динамика состояния: {{object.get_s_dyn_display}}</p>
 <p>Примечания: {{object.note}}</p>
-<p></p>
-<p></p>
-
 <hr>
-
-<!-- какие сутки в реанимации? -->
-
