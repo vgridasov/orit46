@@ -14,21 +14,26 @@ class Home(generic.ListView):
     # paginate_by = 25
 
     def get_queryset(self):
-        """ возвращает последние 10 записей
+        """ возвращает последние 10 записей, в которых в качестве регистратора указан текущий пользователь
 
         return AROLogModel.objects.order_by('-edit_datetime')[:10]
         """
         q = Q(
             registrator__user=self.request.user
         )
-        return AROLogModel.objects.filter(q)
+        return AROLogModel.objects.filter(q).order_by('-edit_datetime')[:10]
 
-    # def get_context_data(self, *args, **kwargs):
-    #     context = super().get_context_data(*args, **kwargs)
-    #     context['mycontext'] = 'Мой контекст'
-    #     context['molist'] = MOModel.objects.all()
+    # TODO: вернуть наименование подразделения зарегистриованного пользователя, его коечный фонд, количество св.коек
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context['mycontext'] = 'Мой контекст'
+        context['staff'] = StaffModel.objects.filter(user=self.request.user) # ???
+    #     context['mo_unit'] = BedSpaceNumberModel.objects.filter(mo_unit)
+    #     context['mo_unit_bed_num'] = BedSpaceNumberModel.objects.filter(mo_unit)
+    #     context['mo_unit_free_bed_num'] = BedSpaceNumberModel.objects.filter(mo_unit)
     #
-    #     return context
+        return context
+
 
 @method_decorator(login_required, name='dispatch')
 class AListView(generic.ListView):
