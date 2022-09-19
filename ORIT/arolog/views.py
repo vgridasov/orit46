@@ -1,3 +1,5 @@
+import datetime
+
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
@@ -23,15 +25,27 @@ class Home(generic.ListView):
         )
         return AROLogModel.objects.filter(q).order_by('-edit_datetime')[:10]
 
-    # TODO: вернуть наименование подразделения зарегистриованного пользователя, его коечный фонд, количество св.коек
+    # вернуть наименование подразделения зарегистриованного пользователя, его коечный фонд, количество св.коек
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
-        context['mycontext'] = 'Мой контекст'
-        context['staff'] = StaffModel.objects.filter(user=self.request.user) # ???
-    #     context['mo_unit'] = BedSpaceNumberModel.objects.filter(mo_unit)
-    #     context['mo_unit_bed_num'] = BedSpaceNumberModel.objects.filter(mo_unit)
-    #     context['mo_unit_free_bed_num'] = BedSpaceNumberModel.objects.filter(mo_unit)
-    #
+        context['staff'] = StaffModel.objects.get(user=self.request.user)  # contains title, fio, mo & mo_unit fields
+
+        mou = context['staff'].mo_unit
+
+        # Коечный фонд своего отделения
+        #
+        '''
+        кол-во занятых коек отделения текущего регистратора = 
+        кол-во сегодняшних записей для отделения 
+        '''
+        occ_bed_num = AROLogModel.objects.filter(
+            mo_unit=mou,
+            reg_datetime__date=datetime.datetime.now().date()
+        ).count()
+        context['occ_bed_num'] = occ_bed_num
+        context['bed_num'] = BedSpaceNumberModel.objects.filter(mo_unit=mou).latest()
+        context['free_bed_num'] = context['bed_num'].num - occ_bed_num
+
         return context
 
 

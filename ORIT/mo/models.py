@@ -75,7 +75,7 @@ class MOUnitModel(models.Model):
     is_active = models.BooleanField(default=True, verbose_name='Действующее')
 
     def __str__(self):
-        return '%s (%s)' % (self.shortname, self.name)
+        return self.shortname
 
     class Meta:
         ordering = ['sn', 'name']
@@ -136,5 +136,6 @@ class BedSpaceNumberModel(models.Model):
 
     class Meta:
         ordering = ['-edit_date']
+        get_latest_by = 'edit_date'
         verbose_name = 'Коечный фонд'
         verbose_name_plural = 'Коечный фонд'
