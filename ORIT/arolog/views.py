@@ -16,6 +16,9 @@ class Home(generic.ListView):
     # paginate_by = 25
 
     def get_queryset(self):
+        # Тут добавить возврат записей в зависимости от роли пользователя (все или только свои)
+        #
+
         """ возвращает последние 10 записей, в которых в качестве регистратора указан текущий пользователь
 
         return AROLogModel.objects.order_by('-edit_datetime')[:10]
@@ -35,16 +38,17 @@ class Home(generic.ListView):
         # Коечный фонд своего отделения
         #
         '''
-        кол-во занятых коек отделения текущего регистратора = 
-        кол-во сегодняшних записей для отделения 
+        кол-во занятых коек отделения текущего пользователя = 
+        кол-во сегодняшних записей для отделения текущего пользователя
         '''
-        occ_bed_num = AROLogModel.objects.filter(
-            mo_unit=mou,
-            reg_datetime__date=datetime.datetime.now().date()
-        ).count()
-        context['occ_bed_num'] = occ_bed_num
-        context['bed_num'] = BedSpaceNumberModel.objects.filter(mo_unit=mou).latest()
-        context['free_bed_num'] = context['bed_num'].num - occ_bed_num
+        if mou:
+            occ_bed_num = AROLogModel.objects.filter(
+                mo_unit=mou,
+                reg_datetime__date=datetime.datetime.now().date()
+            ).count()
+            context['occ_bed_num'] = occ_bed_num
+            context['bed_num'] = BedSpaceNumberModel.objects.filter(mo_unit=mou).latest()
+            context['free_bed_num'] = context['bed_num'].num - occ_bed_num
 
         return context
 
