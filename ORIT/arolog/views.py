@@ -16,14 +16,12 @@ class Home(generic.ListView):
         # Тут добавить возврат записей в зависимости от роли пользователя (все или только свои)
         #
 
-        """ возвращает последние 10 записей, в которых в качестве регистратора указан текущий пользователь
-
-        return AROLogModel.objects.order_by('-edit_datetime')[:10]
-        """
         q = Q(
             registrator__user=self.request.user
+        )&Q(
+            reg_datetime__date=datetime.datetime.today().date()
         )
-        return AROLogModel.objects.filter(q).order_by('-edit_datetime')[:10]
+        return AROLogModel.objects.filter(q).order_by('-edit_datetime')
 
     # вернуть наименование подразделения зарегистриованного пользователя, его коечный фонд, количество св.коек
     def get_context_data(self, *args, **kwargs):
@@ -55,7 +53,10 @@ class AListView(generic.ListView):
     paginate_by = 10
 
     def get_queryset(self):
-        return AROLogModel.objects.order_by('-edit_datetime')
+        q = Q(
+            reg_datetime__date=datetime.datetime.today().date()
+        )
+        return AROLogModel.objects.filter(q).order_by('-edit_datetime')
 
 
 @method_decorator(login_required, name='dispatch')
