@@ -21,7 +21,7 @@ class StaffModelAdmin(admin.ModelAdmin):
         'title',
         'fio',
         'user',
-        'is_fired',
+        'is_active',
         'mo',
     )
     list_display_links = (

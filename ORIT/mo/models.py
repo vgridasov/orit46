@@ -105,7 +105,10 @@ class StaffModel(models.Model):
         null=True, blank=True,
         verbose_name='Подразделение'
     )
-    is_fired = models.BooleanField(default=True, verbose_name='Действующий')
+
+    is_unit_only = models.BooleanField(default=True, verbose_name='Огр. отдел.')
+    is_view_only = models.BooleanField(default=False, verbose_name='Анализ')
+    is_active = models.BooleanField(default=True, verbose_name='Действующий')
 
     def __str__(self):
         return '%s: %s' % (self.title, self.fio)
