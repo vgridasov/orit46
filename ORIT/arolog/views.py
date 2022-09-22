@@ -11,9 +11,6 @@ from mo.models import StaffModel, BedSpaceNumberModel
 @method_decorator(login_required, name='dispatch')
 class Home(generic.ListView):
     template_name = 'arolog/home.html'
-    # context_object_name = 'latest_rec_list'
-
-    # paginate_by = 25
 
     def get_queryset(self):
         # Тут добавить возврат записей в зависимости от роли пользователя (все или только свои)
