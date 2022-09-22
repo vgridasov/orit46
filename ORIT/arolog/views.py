@@ -1,11 +1,11 @@
 import datetime
-
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views import generic
 from .models import AROLogModel
-from mo.models import *
+from mo.models import StaffModel, BedSpaceNumberModel
 
 
 @method_decorator(login_required, name='dispatch')
@@ -79,3 +79,28 @@ class SearchResultsView(generic.ListView):
             mh_num__icontains=query  # поиск по номеру истории болезни
         ).distinct()
         return object_list
+
+
+class ACreateView(LoginRequiredMixin, generic.CreateView):
+    model = AROLogModel
+    template_name = 'arolog/new_rec.html'
+    fields = [
+        "mh_num",  # 'Номер истории болезни')
+        "age",  # 'Возраст')
+        "to_hosp_date",  # 'Дата поступления в МО')
+        "to_unit_date",  # 'Дата поступления в отделение')
+        "diagnosis",  # 'Основной диагноз (MKБ-10)')
+        "oper_date",  # 'Операция (дата-время завершения)')
+        "oper_name",  # 'Операция (наименование)')
+        "mind",  # 'Степень угнетения сознания (по Коновалову)'
+        "vent",  # Статус ИВЛ
+        "s_dyn",  # 'Динамика состояния'
+        "note"  # 'Примечания')
+    ]
+
+    def form_valid(self, form):
+        form.instance.mo = StaffModel.objects.get(user=self.request.user).mo
+        form.instance.mo_unit = StaffModel.objects.get(user=self.request.user).mo_unit
+        form.instance.registrator = StaffModel.objects.get(user=self.request.user)
+
+        return super().form_valid(form)

@@ -2,12 +2,13 @@
  {{object.mo}}, {{object.mo_unit}}: Запись #{{ object.pk }}
 </h6>
 
-<p>{{object.registrator}}; дата последнего изменения: {{ object.reg_datetime|date:"d M y g:i" }}</p>
+<p>{{object.registrator}}; дата последнего изменения: {{ object.reg_datetime|date:"d M y H:i" }}</p>
 <hr>
 <p>История болезник №{{ object.mh_num }}; Возраст (лет): {{ object.age }}</p>
-<p>Дата поступления в МО: {{object.to_hosp_date|date:"D d M y g:i"}}</p>
-<p>Дата поступления в отделение: {{object.to_unit_date|date:"D d M y g:i"}}.<br>
- На дату записи [ {{ object.reg_datetime|date:"d M y" }} ] <b>{{ object.get_duration_of_stay }}-е сутки в реанимации</b></p>
+<p>Дата поступления в МО: {{object.to_hosp_date|date:"D d M y H:i"}}</p>
+<p>Дата поступления в отделение: {{object.to_unit_date|date:"D d M y H:i"}}.<br>
+<b>Количество суток в отделении: {{ object.get_duration_of_stay }}</b>
+ (на дату записи - {{ object.reg_datetime|date:"d M y" }} )</p>
 <p>Основной диагноз (MKБ-10): {{object.diagnosis}}</p>
 
 {% if object.oper_date %}

@@ -1,5 +1,12 @@
 {% load bootstrap5 %}
 
+Наименование МО <br>
+Контактный телефон <br>
+Коечный фонд ОРИТ <br>
+Кол-во свободных коек ОРИТ <br>
+% заполнения коек ОРИТ <br>
+
+
 
 {% if object_list %}
 
@@ -29,7 +36,7 @@
 
     <tr style="text-align: center;">
         <td>
-            {{ obj.edit_datetime|date:"d M y H:i" }}
+            {{ obj.edit_datetime|date:"d M y g:i" }}
         </td>
         <td style="text-align: center;">
             {{ obj.mo_unit }}
@@ -49,7 +56,7 @@
             {{ obj.to_hosp_date|date:"d M y" }}
         </td>
         <td style="text-align: center;">
-            {{ obj.to_unit_date|date:"d M y" }}<br>
+            {{ obj.to_unit_date|date:"d M y" }}
             &nbsp;({{ obj.get_duration_of_stay }} сут.)
         </td>
 

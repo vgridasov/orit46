@@ -79,7 +79,7 @@ class AROLogModel(models.Model):
     def get_absolute_url(self):
         return reverse('detail', kwargs={'pk': self.pk})
 
-    def get_duration_of_stay(self):
+    def get_duration_of_stay(self):  # Количество суток нахождения в отделении на дату записи в журнал
         dof = self.reg_datetime - self.to_unit_date
         return dof.days
 
