@@ -55,7 +55,7 @@ class Home(generic.ListView):
 
 @method_decorator(login_required, name='dispatch')
 class AListView(generic.ListView):
-    paginate_by = 25
+    paginate_by = 10
 
     def get_queryset(self):
         return AROLogModel.objects.order_by('-edit_datetime')
