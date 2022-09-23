@@ -18,12 +18,11 @@ class BedSpaceNumberListView(generic.ListView):
 class BedSpaceCreateView(LoginRequiredMixin, generic.CreateView):
     model = BedSpaceNumberModel
     template_name = 'arolog/new_rec.html'
-    fields = ["num"]
+    fields = ["num", "note"]
     success_url = '/'
 
     def form_valid(self, form):
         form.instance.mo = StaffModel.objects.get(user=self.request.user).mo
         form.instance.mo_unit = StaffModel.objects.get(user=self.request.user).mo_unit
-        # form.instance.registrator = StaffModel.objects.get(user=self.request.user)
 
         return super().form_valid(form)

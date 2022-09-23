@@ -120,7 +120,7 @@ class StaffModel(models.Model):
 
 
 class BedSpaceNumberModel(models.Model):
-    edit_date = models.DateField(auto_now=True, verbose_name='Дата изм.')
+    edit_date = models.DateTimeField(auto_now=True, verbose_name='Дата изм.')
     mo = models.ForeignKey(
         MOModel,
         on_delete=models.SET_NULL,
@@ -133,6 +133,7 @@ class BedSpaceNumberModel(models.Model):
         verbose_name='Подразделение'
     )
     num = models.SmallIntegerField(verbose_name='Кол-во коек')
+    note = models.CharField(max_length=200, default='Причина не указана!', verbose_name='Причина изменения')
 
     def __str__(self):
         return '%s: %s - %s' % (self.edit_date, self.mo, self.num)
