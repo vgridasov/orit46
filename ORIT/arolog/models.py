@@ -40,6 +40,7 @@ class AROLogModel(models.Model):
     ]
     mind = models.CharField(
         max_length=1,
+        null=True, blank=True,
         choices=MIND_CHOICES,
         verbose_name='Степень угнетения сознания (шкала ком Глазго)'
     )
