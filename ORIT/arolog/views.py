@@ -11,7 +11,8 @@ from mo.models import StaffModel, BedSpaceNumberModel
 
 def index(request):
     context = {'title': 'Добро пожаловать!'}
-    context['staff'] = StaffModel.objects.get(user=request.user)
+    if request.user.pk:
+        context['staff'] = StaffModel.objects.get(user=request.user)
     return render(request, 'arolog/welcome.html', context)
 
 
