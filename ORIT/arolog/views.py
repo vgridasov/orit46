@@ -11,6 +11,7 @@ from mo.models import StaffModel, BedSpaceNumberModel
 
 def index(request):
     context = {'title': 'Добро пожаловать!'}
+    context['staff'] = StaffModel.objects.get(user=request.user)
     return render(request, 'arolog/welcome.html', context)
 
 
@@ -89,9 +90,19 @@ class SearchResultsView(generic.ListView):
 
     def get_queryset(self):
         query = self.request.GET.get('q')
-        object_list = AROLogModel.objects.filter(
-            mh_num__icontains=query  # поиск по номеру истории болезни
-        ).distinct()
+        if StaffModel.objects.get(user=self.request.user).is_unit_only:
+            q = Q(
+                registrator__user=self.request.user
+            ) & Q(
+                mh_num__icontains=query # поиск по номеру истории болезни
+            )
+            object_list = AROLogModel.objects.filter(q).distinct().order_by('-edit_datetime')
+        else:
+            q = Q(
+                mh_num__icontains=query
+            )
+            object_list = AROLogModel.objects.filter(q).distinct().order_by('-edit_datetime')
+
         return object_list
 
 
@@ -137,9 +148,9 @@ class AUpdateView(LoginRequiredMixin, generic.UpdateView):
         "note"  # 'Примечания')
     ]
 
-    def form_valid(self, form):
-        form.instance.mo = StaffModel.objects.get(user=self.request.user).mo
-        form.instance.mo_unit = StaffModel.objects.get(user=self.request.user).mo_unit
-        form.instance.registrator = StaffModel.objects.get(user=self.request.user)
-
-        return super().form_valid(form)
+    # def form_valid(self, form):
+    #     form.instance.mo = StaffModel.objects.get(user=self.request.user).mo
+    #     form.instance.mo_unit = StaffModel.objects.get(user=self.request.user).mo_unit
+    #     form.instance.registrator = StaffModel.objects.get(user=self.request.user)
+    #
+    #     return super().form_valid(form)
