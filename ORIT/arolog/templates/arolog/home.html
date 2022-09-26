@@ -5,9 +5,9 @@
 {{ staff.mo }} - {{ staff.mo_unit }}
 </h5>
 Регистратор: {{ staff.title }} {{ staff.fio }}<br>
-всего коек: {{ bed_num.num }}; <a href="/mo/bed/add/">[изменить]</a><br>
+всего коек: {{ bed_num }}; <a href="/mo/bed/add/">[изменить]</a><br>
 занято коек: {{ occ_bed_num }}; <a href="/arolog/add/">[добавить]</a><br>
 свободных коек: {{ free_bed_num }} ({{ free_bed_percent }}%)<br>
-
+<hr>
 {% include 'arolog/object_list.html' %}
 {% endblock %}

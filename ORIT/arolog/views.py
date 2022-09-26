@@ -38,14 +38,13 @@ class Home(generic.ListView):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         context['staff'] = StaffModel.objects.get(user=self.request.user)  # contains title, fio, mo & mo_unit fields
-
         mou = context['staff'].mo_unit
 
         # Коечный фонд своего отделения
         #
         '''
-        кол-во занятых коек отделения текущего пользователя = 
-        кол-во сегодняшних записей для отделения текущего пользователя
+        кол-во занятых коек отделения текущего пользователя равно 
+        кол-ву сегодняшних записей для отделения текущего пользователя
         '''
         if mou:
             occ_bed_num = AROLogModel.objects.filter(
@@ -53,9 +52,14 @@ class Home(generic.ListView):
                 reg_datetime__date=datetime.datetime.now().date()
             ).count()
             context['occ_bed_num'] = occ_bed_num
-            context['bed_num'] = BedSpaceNumberModel.objects.filter(mo_unit=mou).latest()
-            context['free_bed_num'] = context['bed_num'].num - occ_bed_num
-            context['free_bed_percent'] = round(context['free_bed_num'] / context['bed_num'].num * 100, 1)
+            if BedSpaceNumberModel.objects.filter(mo_unit=mou):
+                context['bed_num'] = BedSpaceNumberModel.objects.filter(mo_unit=mou).latest().num
+                context['free_bed_num'] = context['bed_num'] - occ_bed_num
+                context['free_bed_percent'] = round(context['free_bed_num'] / context['bed_num'] * 100, 1)
+            else:
+                context['bed_num'] = 'нет данных'
+                context['free_bed_num'] = 'нет данных'
+                context['free_bed_percent'] = '-'
 
         return context
 
