@@ -24,7 +24,7 @@ class Home(generic.ListView):
         if StaffModel.objects.get(user=self.request.user).is_unit_only:
             q = Q(
                 registrator__user=self.request.user
-            )&Q(
+            ) & Q(
                 reg_datetime__date=datetime.datetime.today().date()
             )
             return AROLogModel.objects.filter(q).order_by('-edit_datetime')
@@ -96,6 +96,31 @@ class SearchResultsView(generic.ListView):
 
 
 class ACreateView(LoginRequiredMixin, generic.CreateView):
+    model = AROLogModel
+    template_name = 'arolog/new_rec.html'
+    fields = [
+        "mh_num",  # 'Номер истории болезни')
+        "age",  # 'Возраст')
+        "to_hosp_date",  # 'Дата поступления в МО')
+        "to_unit_date",  # 'Дата поступления в отделение')
+        "diagnosis",  # 'Основной диагноз (MKБ-10)')
+        "oper_date",  # 'Операция (дата-время завершения)')
+        "oper_name",  # 'Операция (наименование)')
+        "mind",  # 'Степень угнетения сознания (по Коновалову)'
+        "vent",  # Статус ИВЛ
+        "s_dyn",  # 'Динамика состояния'
+        "note"  # 'Примечания')
+    ]
+
+    def form_valid(self, form):
+        form.instance.mo = StaffModel.objects.get(user=self.request.user).mo
+        form.instance.mo_unit = StaffModel.objects.get(user=self.request.user).mo_unit
+        form.instance.registrator = StaffModel.objects.get(user=self.request.user)
+
+        return super().form_valid(form)
+
+
+class AUpdateView(LoginRequiredMixin, generic.UpdateView):
     model = AROLogModel
     template_name = 'arolog/new_rec.html'
     fields = [

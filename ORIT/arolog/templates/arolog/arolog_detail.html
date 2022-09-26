@@ -3,7 +3,10 @@
 {% block content %}
 
 {% include 'arolog/object_detail.html' %}
-            <a class="nav-link active" aria-current="page" href="{% url 'home' %}">
-              Вернуться к моему списку
-            </a>
+<a class="nav-link active" aria-current="page" href="{% url 'edit' object.pk %}">
+  Изменить запись
+</a>
+<a class="nav-link active" aria-current="page" href="{% url 'my' %}">
+  Вернуться к моему списку
+</a>
 {% endblock %}
