@@ -37,7 +37,6 @@ class AROLogModel(models.Model):
         ('5', 'Умеренная кома (Кома I)'),
         ('6', 'Глубокая кома (Кома II)'),
         ('7', 'Атоническая кома (Кома III)'),
-        ('0', 'Летальный исход'),
     ]
     mind = models.CharField(
         max_length=1,

@@ -2,10 +2,16 @@ import datetime
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.views import generic
 from .models import AROLogModel
 from mo.models import StaffModel, BedSpaceNumberModel
+
+
+def index(request):
+    context = {'title': 'Добро пожаловать!'}
+    return render(request, 'arolog/welcome.html', context)
 
 
 @method_decorator(login_required, name='dispatch')
