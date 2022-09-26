@@ -41,7 +41,7 @@ class AROLogModel(models.Model):
     mind = models.CharField(
         max_length=1,
         choices=MIND_CHOICES,
-        verbose_name='Степень угнетения сознания (по Коновалову)'
+        verbose_name='Степень угнетения сознания (шкала ком Глазго)'
     )
 
     # Статус ИВЛ
@@ -66,6 +66,7 @@ class AROLogModel(models.Model):
         ('2', 'Улучшение'),
         ('3', 'Без изменений'),
         ('4', 'Ухудшение'),
+        ('5', 'Летальный исход'),
     ]
     s_dyn = models.CharField(
         max_length=1,
