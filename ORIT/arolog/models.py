@@ -70,11 +70,12 @@ class AROLogModel(models.Model):
     s_dyn = models.CharField(
         max_length=1,
         choices=S_DYN_CHOICES,
-        default='1',
+        # default='1',
         verbose_name='Динамика состояния'
     )
 
     note = models.TextField(null=True, blank=True, verbose_name='Примечания')
+    to_report = models.BooleanField(default=False, verbose_name='Отразить в отчёте')
 
     def get_absolute_url(self):
         return reverse('detail', kwargs={'pk': self.pk})

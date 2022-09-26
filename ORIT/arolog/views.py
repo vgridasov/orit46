@@ -15,13 +15,18 @@ class Home(generic.ListView):
     def get_queryset(self):
         # Тут добавить возврат записей в зависимости от роли пользователя (все или только свои)
         #
-
-        q = Q(
-            registrator__user=self.request.user
-        )&Q(
-            reg_datetime__date=datetime.datetime.today().date()
-        )
-        return AROLogModel.objects.filter(q).order_by('-edit_datetime')
+        if StaffModel.objects.get(user=self.request.user).is_unit_only:
+            q = Q(
+                registrator__user=self.request.user
+            )&Q(
+                reg_datetime__date=datetime.datetime.today().date()
+            )
+            return AROLogModel.objects.filter(q).order_by('-edit_datetime')
+        else:
+            q = Q(
+                reg_datetime__date=datetime.datetime.today().date()
+            )
+            return AROLogModel.objects.filter(q).order_by('mo_unit', '-edit_datetime')
 
     # вернуть наименование подразделения зарегистриованного пользователя, его коечный фонд, количество св.коек
     def get_context_data(self, *args, **kwargs):
@@ -44,6 +49,7 @@ class Home(generic.ListView):
             context['occ_bed_num'] = occ_bed_num
             context['bed_num'] = BedSpaceNumberModel.objects.filter(mo_unit=mou).latest()
             context['free_bed_num'] = context['bed_num'].num - occ_bed_num
+            context['free_bed_percent'] = round(context['free_bed_num'] / context['bed_num'].num * 100, 1)
 
         return context
 
