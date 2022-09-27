@@ -21,7 +21,7 @@ class Home(generic.ListView):
     template_name = 'arolog/home.html'
 
     def get_queryset(self):
-        # Тут добавить возврат записей в зависимости от роли пользователя (все или только свои)
+        # возврат записей в зависимости от роли пользователя (все или только свои)
         #
         if StaffModel.objects.get(user=self.request.user).is_unit_only:
             q = Q(
@@ -29,12 +29,12 @@ class Home(generic.ListView):
             ) & Q(
                 reg_datetime__date=datetime.datetime.today().date()
             )
-            return AROLogModel.objects.filter(q).order_by('-edit_datetime')
+            return AROLogModel.objects.filter(q).order_by('-reg_datetime')
         else:
             q = Q(
                 reg_datetime__date=datetime.datetime.today().date()
             )
-            return AROLogModel.objects.filter(q).order_by('mo_unit', '-edit_datetime')
+            return AROLogModel.objects.filter(q).order_by('mo_unit', '-reg_datetime')
 
     # вернуть наименование подразделения зарегистриованного пользователя, его коечный фонд, количество св.коек
     def get_context_data(self, *args, **kwargs):
@@ -75,6 +75,18 @@ class AListView(generic.ListView):
             reg_datetime__date=datetime.datetime.today().date()
         )
         return AROLogModel.objects.filter(q).order_by('-edit_datetime')
+
+
+@method_decorator(login_required, name='dispatch')
+class AMyListView(generic.ListView):
+    template_name = 'arolog/arologmodel_list.html'
+    paginate_by = 10
+
+    def get_queryset(self):
+        q = Q(
+            registrator__user=self.request.user
+        )
+        return AROLogModel.objects.filter(q).order_by('-reg_datetime')
 
 
 @method_decorator(login_required, name='dispatch')
