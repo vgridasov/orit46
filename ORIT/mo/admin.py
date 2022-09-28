@@ -18,14 +18,14 @@ class MOModelAdmin(admin.ModelAdmin):
 
 class StaffModelAdmin(admin.ModelAdmin):
     list_display = (
+        'mo_unit',
         'fio',
-        'email',
         'user',
+        'email',
         'is_active',
-        'mo',
     )
     list_display_links = (
-        'title',
+        'mo_unit',
         'fio',
     )
 

@@ -71,6 +71,15 @@ class AListView(generic.ListView):
     paginate_by = 10
 
     def get_queryset(self):
+
+        return AROLogModel.objects.all().order_by('-edit_datetime')
+
+
+@method_decorator(login_required, name='dispatch')
+class ATodayListView(generic.ListView):
+    paginate_by = 10
+
+    def get_queryset(self):
         q = Q(
             reg_datetime__date=datetime.datetime.today().date()
         )
@@ -159,11 +168,4 @@ class AUpdateView(LoginRequiredMixin, generic.UpdateView):
         "vent",  # Статус ИВЛ
         "s_dyn",  # 'Динамика состояния'
         "note"  # 'Примечания')
-    ]
-
-    # def form_valid(self, form):
-    #     form.instance.mo = StaffModel.objects.get(user=self.request.user).mo
-    #     form.instance.mo_unit = StaffModel.objects.get(user=self.request.user).mo_unit
-    #     form.instance.registrator = StaffModel.objects.get(user=self.request.user)
-    #
-    #     return super().form_valid(form)
+        ]

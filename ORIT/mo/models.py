@@ -75,7 +75,7 @@ class MOUnitModel(models.Model):
     is_active = models.BooleanField(default=True, verbose_name='Действующее')
 
     def __str__(self):
-        return self.shortname
+        return '%s: %s' % (self.mo, self.shortname)
 
     class Meta:
         ordering = ['sn', 'name']
