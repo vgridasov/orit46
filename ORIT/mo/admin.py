@@ -18,8 +18,8 @@ class MOModelAdmin(admin.ModelAdmin):
 
 class StaffModelAdmin(admin.ModelAdmin):
     list_display = (
-        'title',
         'fio',
+        'email',
         'user',
         'is_active',
         'mo',
