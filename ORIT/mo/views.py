@@ -19,7 +19,7 @@ class BedSpaceCreateView(LoginRequiredMixin, generic.CreateView):
     model = BedSpaceNumberModel
     template_name = 'arolog/new_rec.html'
     fields = ["num", "note"]
-    success_url = '/'
+    success_url = '/my/'
 
     def form_valid(self, form):
         form.instance.mo = StaffModel.objects.get(user=self.request.user).mo
