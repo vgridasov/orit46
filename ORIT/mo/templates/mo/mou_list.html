@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MOUnit List</title>
+</head>
+<body>
+<h4>
+    Список подразделений
+</h4>
+<hr>
+{% if object_list %}
+<ul>
+{% for mou in object_list %}
+    <li>
+        <a href="{{ mou.get_absolute_url }}">
+            {{ mou }}
+        </a>
+    </li>
+
+
+{% endfor %}
+</ul>
+
+{% endif %}
+</body>
+</html>

@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.urls import reverse
 
 
 class MOModel(models.Model):
@@ -76,6 +77,9 @@ class MOUnitModel(models.Model):
 
     def __str__(self):
         return '%s: %s' % (self.mo, self.shortname)
+
+    def get_absolute_url(self):
+        return reverse('moudetail', kwargs={'pk': self.pk})
 
     class Meta:
         ordering = ['sn', 'name']

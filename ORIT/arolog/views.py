@@ -56,8 +56,13 @@ class Home(generic.ListView):
             context['occ_bed_num'] = occ_bed_num
             if BedSpaceNumberModel.objects.filter(mo_unit=mou):
                 context['bed_num'] = BedSpaceNumberModel.objects.filter(mo_unit=mou).latest().num
-                context['free_bed_num'] = context['bed_num'] - occ_bed_num
-                context['free_bed_percent'] = round(context['free_bed_num'] / context['bed_num'] * 100, 1)
+                if context['bed_num'] > 0:
+                    context['free_bed_num'] = context['bed_num'] - occ_bed_num
+                    context['free_bed_percent'] = round(context['free_bed_num'] / context['bed_num'] * 100, 1)
+                else:
+                    context['bed_num'] = 'нет данных'
+                    context['free_bed_num'] = 'нет данных'
+                    context['free_bed_percent'] = '-'
             else:
                 context['bed_num'] = 'нет данных'
                 context['free_bed_num'] = 'нет данных'
