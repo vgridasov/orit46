@@ -24,17 +24,14 @@ class Home(generic.ListView):
         # возврат записей в зависимости от роли пользователя (все или только свои)
         #
         if StaffModel.objects.get(user=self.request.user).is_unit_only:
-            q = Q(
-                registrator__user=self.request.user
-            ) & Q(
+            return AROLogModel.objects.filter(
+                registrator__user=self.request.user,
                 reg_datetime__date=datetime.datetime.today().date()
-            )
-            return AROLogModel.objects.filter(q).order_by('-reg_datetime')
+            ).order_by('s_dyn', '-reg_datetime')
         else:
-            q = Q(
+            return AROLogModel.objects.filter(
                 reg_datetime__date=datetime.datetime.today().date()
-            )
-            return AROLogModel.objects.filter(q).order_by('mo_unit', '-reg_datetime')
+            ).order_by('mo_unit', 's_dyn', '-reg_datetime')
 
     # вернуть наименование подразделения зарегистриованного пользователя, его коечный фонд, количество св.коек
     def get_context_data(self, *args, **kwargs):
@@ -44,9 +41,11 @@ class Home(generic.ListView):
 
         # Коечный фонд своего отделения:
         # кол-во занятых коек отделения текущего пользователя равно
-        # кол-ву сегодняшних записей для отделения текущего пользователя
+        # кол-ву сегодняшних записей для отделения текущего пользователя, за исключением летальных
         if mou:
-            occ_bed_num = AROLogModel.objects.filter(
+            occ_bed_num = AROLogModel.objects.exclude(
+                s_dyn='5'  # Исключаем пациентов с летальным исходом
+            ).filter(
                 mo_unit=mou,
                 reg_datetime__date=datetime.datetime.now().date()
             ).count()
@@ -89,7 +88,7 @@ class AMyListView(generic.ListView):
     def get_queryset(self):
         return AROLogModel.objects.filter(
             registrator__user=self.request.user
-        ).order_by('-reg_datetime')
+        ).order_by('s_dyn', '-reg_datetime')
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
@@ -98,7 +97,9 @@ class AMyListView(generic.ListView):
 
         # Коечный фонд своего отделения
         if mou:
-            occ_bed_num = AROLogModel.objects.filter(
+            occ_bed_num = AROLogModel.objects.exclude(
+                s_dyn='5'  # Исключаем пациентов с летальным исходом
+            ).filter(
                 mo_unit=mou,
                 reg_datetime__date=datetime.datetime.now().date()
             ).count()
