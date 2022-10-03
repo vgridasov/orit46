@@ -30,7 +30,7 @@ class BedSpaceCreateView(LoginRequiredMixin, generic.CreateView):
         return super().form_valid(form)
 
 
-class MOUnitModelListView(generic.ListView):
+class MOUnitModelListView(LoginRequiredMixin, generic.ListView):
     model = MOUnitModel
     template_name = 'mo/mou_list.html'
 
@@ -44,7 +44,7 @@ class MOUnitModelListView(generic.ListView):
         return context
 
 
-class MOUitDetailView(generic.DetailView):
+class MOUitDetailView(LoginRequiredMixin, generic.DetailView):
     model = MOUnitModel
     template_name = 'mo/mou_detail.html'
 
