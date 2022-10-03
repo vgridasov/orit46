@@ -33,7 +33,6 @@ class Home(generic.ListView):
                 reg_datetime__date=datetime.datetime.today().date()
             ).order_by('mo_unit', 's_dyn', '-reg_datetime')
 
-    # вернуть наименование подразделения зарегистриованного пользователя, его коечный фонд, количество св.коек
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         context['staff'] = StaffModel.objects.get(user=self.request.user)  # contains title, fio, mo & mo_unit fields
@@ -69,6 +68,11 @@ class AListView(generic.ListView):
     def get_queryset(self):
         return AROLogModel.objects.all().order_by('-edit_datetime')
 
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context['staff'] = StaffModel.objects.get(user=self.request.user)  # contains title, fio, mo & mo_unit fields
+
+        return context
 
 @method_decorator(login_required, name='dispatch')
 class ATodayListView(generic.ListView):
@@ -79,6 +83,11 @@ class ATodayListView(generic.ListView):
             reg_datetime__date=datetime.datetime.today().date()
         ).order_by('-edit_datetime')
 
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context['staff'] = StaffModel.objects.get(user=self.request.user)  # contains title, fio, mo & mo_unit fields
+
+        return context
 
 @method_decorator(login_required, name='dispatch')
 class AMyListView(generic.ListView):
@@ -121,6 +130,11 @@ class ADetailView(generic.DetailView):
     model = AROLogModel
     template_name = 'arolog/arolog_detail.html'
 
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context['staff'] = StaffModel.objects.get(user=self.request.user)  # contains title, fio, mo & mo_unit fields
+
+        return context
 
 @method_decorator(login_required, name='dispatch')
 class SearchResultsView(generic.ListView):
@@ -142,6 +156,11 @@ class SearchResultsView(generic.ListView):
 
         return object_list
 
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context['staff'] = StaffModel.objects.get(user=self.request.user)  # contains title, fio, mo & mo_unit fields
+
+        return context
 
 class ACreateView(LoginRequiredMixin, generic.CreateView):
     model = AROLogModel
@@ -167,6 +186,11 @@ class ACreateView(LoginRequiredMixin, generic.CreateView):
 
         return super().form_valid(form)
 
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context['staff'] = StaffModel.objects.get(user=self.request.user)  # contains title, fio, mo & mo_unit fields
+
+        return context
 
 class AUpdateView(LoginRequiredMixin, generic.UpdateView):
     model = AROLogModel
@@ -184,3 +208,8 @@ class AUpdateView(LoginRequiredMixin, generic.UpdateView):
         "s_dyn",  # 'Динамика состояния'
         "note"  # 'Примечания')
     ]
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context['staff'] = StaffModel.objects.get(user=self.request.user)  # contains title, fio, mo & mo_unit fields
+
+        return context
