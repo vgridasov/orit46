@@ -42,12 +42,9 @@ class Home(generic.ListView):
         context['staff'] = StaffModel.objects.get(user=self.request.user)  # contains title, fio, mo & mo_unit fields
         mou = context['staff'].mo_unit
 
-        # Коечный фонд своего отделения
-        #
-        '''
-        кол-во занятых коек отделения текущего пользователя равно 
-        кол-ву сегодняшних записей для отделения текущего пользователя
-        '''
+        # Коечный фонд своего отделения:
+        # кол-во занятых коек отделения текущего пользователя равно
+        # кол-ву сегодняшних записей для отделения текущего пользователя
         if mou:
             occ_bed_num = AROLogModel.objects.filter(
                 mo_unit=mou,
@@ -63,11 +60,6 @@ class Home(generic.ListView):
                     context['bed_num'] = 'нет данных'
                     context['free_bed_num'] = 'нет данных'
                     context['free_bed_percent'] = '-'
-            else:
-                context['bed_num'] = 'нет данных'
-                context['free_bed_num'] = 'нет данных'
-                context['free_bed_percent'] = '-'
-
         return context
 
 
@@ -76,7 +68,6 @@ class AListView(generic.ListView):
     paginate_by = 10
 
     def get_queryset(self):
-
         return AROLogModel.objects.all().order_by('-edit_datetime')
 
 
@@ -85,22 +76,43 @@ class ATodayListView(generic.ListView):
     paginate_by = 10
 
     def get_queryset(self):
-        q = Q(
+        return AROLogModel.objects.filter(
             reg_datetime__date=datetime.datetime.today().date()
-        )
-        return AROLogModel.objects.filter(q).order_by('-edit_datetime')
+        ).order_by('-edit_datetime')
 
 
 @method_decorator(login_required, name='dispatch')
 class AMyListView(generic.ListView):
-    template_name = 'arolog/arologmodel_list.html'
+    template_name = 'arolog/home.html'
     paginate_by = 10
 
     def get_queryset(self):
-        q = Q(
+        return AROLogModel.objects.filter(
             registrator__user=self.request.user
-        )
-        return AROLogModel.objects.filter(q).order_by('-reg_datetime')
+        ).order_by('-reg_datetime')
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context['staff'] = StaffModel.objects.get(user=self.request.user)  # contains title, fio, mo & mo_unit fields
+        mou = context['staff'].mo_unit
+
+        # Коечный фонд своего отделения
+        if mou:
+            occ_bed_num = AROLogModel.objects.filter(
+                mo_unit=mou,
+                reg_datetime__date=datetime.datetime.now().date()
+            ).count()
+            context['occ_bed_num'] = occ_bed_num
+            if BedSpaceNumberModel.objects.filter(mo_unit=mou):
+                context['bed_num'] = BedSpaceNumberModel.objects.filter(mo_unit=mou).latest().num
+                if context['bed_num'] > 0:
+                    context['free_bed_num'] = context['bed_num'] - occ_bed_num
+                    context['free_bed_percent'] = round(context['free_bed_num'] / context['bed_num'] * 100, 1)
+                else:
+                    context['bed_num'] = 'нет данных'
+                    context['free_bed_num'] = 'нет данных'
+                    context['free_bed_percent'] = '-'
+        return context
 
 
 @method_decorator(login_required, name='dispatch')
@@ -118,17 +130,14 @@ class SearchResultsView(generic.ListView):
     def get_queryset(self):
         query = self.request.GET.get('q')
         if StaffModel.objects.get(user=self.request.user).is_unit_only:
-            q = Q(
-                registrator__user=self.request.user
-            ) & Q(
-                mh_num__icontains=query # поиск по номеру истории болезни
-            )
-            object_list = AROLogModel.objects.filter(q).distinct().order_by('-edit_datetime')
+            object_list = AROLogModel.objects.filter(
+                registrator__user=self.request.user,
+                mh_num__icontains=query  # поиск по номеру истории болезни
+            ).distinct().order_by('-edit_datetime')
         else:
-            q = Q(
+            object_list = AROLogModel.objects.filter(
                 mh_num__icontains=query
-            )
-            object_list = AROLogModel.objects.filter(q).distinct().order_by('-edit_datetime')
+            ).distinct().order_by('mo_unit', '-edit_datetime')
 
         return object_list
 
@@ -173,4 +182,4 @@ class AUpdateView(LoginRequiredMixin, generic.UpdateView):
         "vent",  # Статус ИВЛ
         "s_dyn",  # 'Динамика состояния'
         "note"  # 'Примечания')
-        ]
+    ]

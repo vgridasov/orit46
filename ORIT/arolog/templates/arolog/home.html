@@ -2,18 +2,18 @@
 
 {% block content %}
 
-{% if staff.is_unit_only %}
+<h6>
+    Пользователь: {{ staff.title }} {{ staff.fio }}
+</h6>
 
+{% if staff.is_unit_only %}
 <h5>
 {{ staff.mo_unit }}
 </h5>
-Регистратор: {{ staff.title }} {{ staff.fio }}<br>
-
-{% endif %}
-
 всего коек: {{ bed_num }}; <a href="/mo/bed/add/">[изменить]</a><br>
 занято коек: {{ occ_bed_num }}; <a href="/arolog/add/">[добавить]</a><br>
 свободных коек: {{ free_bed_num }} ({{ free_bed_percent }}%)<br>
+{% endif %}
 <hr>
 {% include 'arolog/object_list.html' %}
 {% endblock %}
