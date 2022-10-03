@@ -13,7 +13,13 @@
 всего коек: {{ bed_num }}; <a href="/mo/bed/add/">[изменить]</a><br>
 занято коек: {{ occ_bed_num }}; <a href="/arolog/add/">[добавить]</a><br>
 свободных коек: {{ free_bed_num }} ({{ free_bed_percent }}%)<br>
-{% endif %}
 <hr>
 {% include 'arolog/object_list.html' %}
+
+{% else %}
+<p>
+    Информация для ДКЦ
+</p>
+
+{% endif %}
 {% endblock %}

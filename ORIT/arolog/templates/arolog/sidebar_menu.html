@@ -7,6 +7,11 @@
 
           {% if not staff.is_unit_only %}
             <li class="nav-item">
+              <a class="nav-link" href="{% url 'my' %}">
+                Главная
+              </a>
+            </li>
+            <li class="nav-item">
               <a class="nav-link" href="{% url 'today' %}">
                 Сегодня
               </a>
