@@ -17,7 +17,7 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-ALLOWED_HOSTS = ['aro46.ru', 'orit.komkb.ru', '127.0.0.1']
+ALLOWED_HOSTS = ['aro46.ru', 'orit.komkb.ru', '127.0.0.1', 'localhost']
 
 
 # Application definition

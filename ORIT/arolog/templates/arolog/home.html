@@ -1,25 +1,29 @@
 {% extends "arolog/wrapper.html" %}
 
 {% block content %}
-
-<h6>
-    Пользователь: {{ staff.title }} {{ staff.fio }}
-</h6>
+<h6>Пользователь: {{ staff.title }} {{ staff.fio }}</h6>
 
 {% if staff.is_unit_only %}
-<h5>
-{{ staff.mo_unit }}
-</h5>
-всего коек: {{ bed_num }}; <a href="/mo/bed/add/">[изменить]</a><br>
-занято коек: {{ occ_bed_num }}; <a href="/arolog/add/">[добавить]</a><br>
-свободных коек: {{ free_bed_num }} ({{ free_bed_percent }}%)<br>
-<hr>
-{% include 'arolog/object_list.html' %}
+    <h5>{{ staff.mo_unit }}</h5>
+    всего коек: {{ bed_num }}; <a href="/mo/bed/add/">[изменить]</a><br>
+    занято коек: {{ occ_bed_num }}; <a href="/arolog/add/">[добавить]</a><br>
+    свободных коек: {{ free_bed_num }} ({{ free_bed_percent }}%)<br>
+    <hr>
+    {% include 'arolog/object_list.html' %}
 
 {% else %}
-<p>
-    Информация для ДКЦ
-</p>
+    <h5>Сводная информация по АРО региона</h5>
+    Дата: {% now "SHORT_DATETIME_FORMAT" %}
+    <hr>
+    <!--
+    Добавлены записи подразделениями: {{ today_mou_list }}<br>
+    -->
+
+    Поступило: {{curr_new_num}}<br>
+    С отрицательной динамикой: {{curr_decline_num}}<br>
+    Летальных: {{curr_lethal_num}}<br>
+    Свободно коек: {{ free_bed_num }}<br>
+    <hr>
 
 {% endif %}
 {% endblock %}

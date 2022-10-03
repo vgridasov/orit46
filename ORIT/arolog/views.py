@@ -6,7 +6,7 @@ from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.views import generic
 from .models import AROLogModel
-from mo.models import StaffModel, BedSpaceNumberModel
+from mo.models import StaffModel, BedSpaceNumberModel, MOUnitModel
 
 
 def index(request):
@@ -36,28 +36,48 @@ class Home(generic.ListView):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         context['staff'] = StaffModel.objects.get(user=self.request.user)  # contains title, fio, mo & mo_unit fields
-        mou = context['staff'].mo_unit
 
-        # Коечный фонд своего отделения:
-        # кол-во занятых коек отделения текущего пользователя равно
-        # кол-ву сегодняшних записей для отделения текущего пользователя, за исключением летальных
-        if mou:
-            occ_bed_num = AROLogModel.objects.exclude(
-                s_dyn='5'  # Исключаем пациентов с летальным исходом
-            ).filter(
-                mo_unit=mou,
-                reg_datetime__date=datetime.datetime.now().date()
+        if StaffModel.objects.get(user=self.request.user).is_unit_only:
+            # Коечный фонд своего отделения:
+            # кол-во занятых коек отделения текущего пользователя равно
+            # кол-ву сегодняшних записей для отделения текущего пользователя, за исключением летальных
+            mou = context['staff'].mo_unit
+            if mou:
+                occ_bed_num = AROLogModel.objects.exclude(
+                    s_dyn='5'  # Исключаем пациентов с летальным исходом
+                ).filter(
+                    mo_unit=mou,
+                    reg_datetime__date=datetime.datetime.now().date()
+                ).count()
+                context['occ_bed_num'] = occ_bed_num
+                if BedSpaceNumberModel.objects.filter(mo_unit=mou):
+                    context['bed_num'] = BedSpaceNumberModel.objects.filter(mo_unit=mou).latest().num
+                    if context['bed_num'] > 0:
+                        context['free_bed_num'] = context['bed_num'] - occ_bed_num
+                        context['free_bed_percent'] = round(context['free_bed_num'] / context['bed_num'] * 100, 1)
+                    else:
+                        context['bed_num'] = 'нет данных'
+                        context['free_bed_num'] = 'нет данных'
+                        context['free_bed_percent'] = '-'
+        else:
+            context['curr_new_num'] = AROLogModel.objects.filter(
+                reg_datetime__date=datetime.datetime.today().date(),
+                s_dyn='1'
             ).count()
-            context['occ_bed_num'] = occ_bed_num
-            if BedSpaceNumberModel.objects.filter(mo_unit=mou):
-                context['bed_num'] = BedSpaceNumberModel.objects.filter(mo_unit=mou).latest().num
-                if context['bed_num'] > 0:
-                    context['free_bed_num'] = context['bed_num'] - occ_bed_num
-                    context['free_bed_percent'] = round(context['free_bed_num'] / context['bed_num'] * 100, 1)
-                else:
-                    context['bed_num'] = 'нет данных'
-                    context['free_bed_num'] = 'нет данных'
-                    context['free_bed_percent'] = '-'
+            context['curr_decline_num'] = AROLogModel.objects.filter(
+                reg_datetime__date=datetime.datetime.today().date(),
+                s_dyn='4'
+            ).count()
+            context['curr_lethal_num'] = AROLogModel.objects.filter(
+                reg_datetime__date=datetime.datetime.today().date(),
+                s_dyn='5'
+            ).count()
+
+            tml = AROLogModel.objects.filter(
+                            reg_datetime__gte=datetime.datetime.today().date()
+                            ).values_list('mo_unit', flat=True).order_by('mo_unit').distinct()
+            context['today_mou_list'] = tml
+
         return context
 
 
@@ -74,6 +94,7 @@ class AListView(generic.ListView):
 
         return context
 
+
 @method_decorator(login_required, name='dispatch')
 class ATodayListView(generic.ListView):
     paginate_by = 10
@@ -81,13 +102,14 @@ class ATodayListView(generic.ListView):
     def get_queryset(self):
         return AROLogModel.objects.filter(
             reg_datetime__date=datetime.datetime.today().date()
-        ).order_by('-edit_datetime')
+        ).order_by('mo_unit', 's_dyn', '-edit_datetime')
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         context['staff'] = StaffModel.objects.get(user=self.request.user)  # contains title, fio, mo & mo_unit fields
 
         return context
+
 
 @method_decorator(login_required, name='dispatch')
 class AMyListView(generic.ListView):
@@ -136,6 +158,7 @@ class ADetailView(generic.DetailView):
 
         return context
 
+
 @method_decorator(login_required, name='dispatch')
 class SearchResultsView(generic.ListView):
     model = AROLogModel
@@ -161,6 +184,7 @@ class SearchResultsView(generic.ListView):
         context['staff'] = StaffModel.objects.get(user=self.request.user)  # contains title, fio, mo & mo_unit fields
 
         return context
+
 
 class ACreateView(LoginRequiredMixin, generic.CreateView):
     model = AROLogModel
@@ -192,6 +216,7 @@ class ACreateView(LoginRequiredMixin, generic.CreateView):
 
         return context
 
+
 class AUpdateView(LoginRequiredMixin, generic.UpdateView):
     model = AROLogModel
     template_name = 'arolog/new_rec.html'
@@ -208,6 +233,7 @@ class AUpdateView(LoginRequiredMixin, generic.UpdateView):
         "s_dyn",  # 'Динамика состояния'
         "note"  # 'Примечания')
     ]
+
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         context['staff'] = StaffModel.objects.get(user=self.request.user)  # contains title, fio, mo & mo_unit fields
