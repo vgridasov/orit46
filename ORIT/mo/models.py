@@ -53,7 +53,7 @@ class MOModel(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('mou_list', kwargs={'pk': self.pk})
+        return reverse('mo_detail', kwargs={'pk': self.pk})
 
     class Meta:
         ordering = ['sn', 'name']
