@@ -19,11 +19,16 @@
     Добавлены записи подразделениями: {{ today_mou_list }}<br>
     -->
 
-    Всего записей: {{curr_log_num}}<br>
+    <b>Всего записей:</b> {{curr_log_num}}<br>
     Поступило: {{curr_new_num}}<br>
     С отрицательной динамикой: {{curr_decline_num}}<br>
     Летальных: {{curr_lethal_num}}<br>
     <hr>
+
+{% for mou in today_mou_list %}
+<a href="{{ mou.get_absolute_url }}">{{mou}}</a>
+
+{% endfor %}
 
 {% endif %}
 {% endblock %}

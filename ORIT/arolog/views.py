@@ -84,10 +84,15 @@ class Home(generic.ListView):
                 s_dyn='5'
             ).count()
 
+            # получение списка подразделений с записями на сегодня
             tml = AROLogModel.objects.filter(
-                            reg_datetime__gte=timezone.now().date()
-                            ).values_list('mo_unit', flat=True).order_by('mo_unit').distinct()
-            context['today_mou_list'] = tml
+                reg_datetime__gte=timezone.now().date()
+            ).values_list('mo_unit', flat=True).order_by('mo_unit').distinct()
+            mou_list = []
+            for m in tml:
+                mou_list.append(MOUnitModel.objects.get(pk=m))
+
+            context['today_mou_list'] = mou_list
 
         return context
 
