@@ -3,6 +3,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views import generic
 from .models import AROLogModel
@@ -26,11 +27,11 @@ class Home(generic.ListView):
         if StaffModel.objects.get(user=self.request.user).is_unit_only:
             return AROLogModel.objects.filter(
                 registrator__user=self.request.user,
-                reg_datetime__date=datetime.datetime.today().date()
+                reg_datetime__gte=timezone.now().date()
             ).order_by('s_dyn', '-reg_datetime')
         else:
             return AROLogModel.objects.filter(
-                reg_datetime__date=datetime.datetime.today().date()
+                reg_datetime__gte=timezone.now().date()
             ).order_by('mo_unit', 's_dyn', '-reg_datetime')
 
     def get_context_data(self, *args, **kwargs):
@@ -47,7 +48,7 @@ class Home(generic.ListView):
                     s_dyn='5'  # Исключаем пациентов с летальным исходом
                 ).filter(
                     mo_unit=mou,
-                    reg_datetime__date=datetime.datetime.now().date()
+                    reg_datetime__gte=timezone.now().date()
                 ).count()
                 context['occ_bed_num'] = occ_bed_num
                 if BedSpaceNumberModel.objects.filter(mo_unit=mou):
@@ -61,20 +62,20 @@ class Home(generic.ListView):
                         context['free_bed_percent'] = '-'
         else:
             context['curr_new_num'] = AROLogModel.objects.filter(
-                reg_datetime__date=datetime.datetime.today().date(),
+                reg_datetime__gte=timezone.now().date(),
                 s_dyn='1'
             ).count()
             context['curr_decline_num'] = AROLogModel.objects.filter(
-                reg_datetime__date=datetime.datetime.today().date(),
+                reg_datetime__gte=timezone.now().date(),
                 s_dyn='4'
             ).count()
             context['curr_lethal_num'] = AROLogModel.objects.filter(
-                reg_datetime__date=datetime.datetime.today().date(),
+                reg_datetime__gte=timezone.now().date(),
                 s_dyn='5'
             ).count()
 
             tml = AROLogModel.objects.filter(
-                            reg_datetime__gte=datetime.datetime.today().date()
+                            reg_datetime__gte=timezone.now().date()
                             ).values_list('mo_unit', flat=True).order_by('mo_unit').distinct()
             context['today_mou_list'] = tml
 
@@ -101,7 +102,7 @@ class ATodayListView(generic.ListView):
 
     def get_queryset(self):
         return AROLogModel.objects.filter(
-            reg_datetime__date=datetime.datetime.today().date()
+            reg_datetime__gte=timezone.now().date()
         ).order_by('mo_unit', 's_dyn', '-edit_datetime')
 
     def get_context_data(self, *args, **kwargs):
@@ -132,7 +133,7 @@ class AMyListView(generic.ListView):
                 s_dyn='5'  # Исключаем пациентов с летальным исходом
             ).filter(
                 mo_unit=mou,
-                reg_datetime__date=datetime.datetime.now().date()
+                reg_datetime__gte=timezone.now().date()
             ).count()
             context['occ_bed_num'] = occ_bed_num
             if BedSpaceNumberModel.objects.filter(mo_unit=mou):
