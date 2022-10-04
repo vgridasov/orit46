@@ -61,14 +61,24 @@ class Home(generic.ListView):
                         context['free_bed_num'] = 'нет данных'
                         context['free_bed_percent'] = '-'
         else:
+            # общее количество записей на сегодня
+            context['curr_log_num'] = AROLogModel.objects.filter(
+                reg_datetime__gte=timezone.now().date()
+            ).count()
+
+            # количество поступлений на сегодня
             context['curr_new_num'] = AROLogModel.objects.filter(
                 reg_datetime__gte=timezone.now().date(),
                 s_dyn='1'
             ).count()
+
+            # Количество ухудшений состояний на сегодня
             context['curr_decline_num'] = AROLogModel.objects.filter(
                 reg_datetime__gte=timezone.now().date(),
                 s_dyn='4'
             ).count()
+
+            # количество летальных на сегодня
             context['curr_lethal_num'] = AROLogModel.objects.filter(
                 reg_datetime__gte=timezone.now().date(),
                 s_dyn='5'

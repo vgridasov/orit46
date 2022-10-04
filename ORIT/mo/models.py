@@ -52,6 +52,10 @@ class MOModel(models.Model):
     def __str__(self):
         return self.name
 
+
+    def get_absolute_url(self):
+        return reverse('mou_list', kwargs={'pk': self.pk})
+
     class Meta:
         ordering = ['sn', 'name']
         verbose_name = 'Мед.организация'
@@ -79,7 +83,7 @@ class MOUnitModel(models.Model):
         return '%s: %s' % (self.mo, self.shortname)
 
     def get_absolute_url(self):
-        return reverse('moudetail', kwargs={'pk': self.pk})
+        return reverse('mou_detail', kwargs={'pk': self.pk})
 
     class Meta:
         ordering = ['sn', 'name']
