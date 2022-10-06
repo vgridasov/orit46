@@ -63,7 +63,4 @@ class MOUitDetailView(LoginRequiredMixin, generic.DetailView):
         context['aro_logs_num'] = context['aro_logs'].count()
         context['aro_logs_today_num'] = context['aro_logs_today'].count()
 
-        if BedSpaceNumberModel.objects.filter(mo_unit__pk=self.object.pk):
-            context['bed_num'] = BedSpaceNumberModel.objects.filter(mo_unit__pk=self.object.pk).latest().num
-
         return context

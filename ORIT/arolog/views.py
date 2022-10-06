@@ -1,6 +1,6 @@
 import datetime
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Q
+from django.db.models import Q, Sum
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.utils import timezone
@@ -61,6 +61,8 @@ class Home(generic.ListView):
                         context['free_bed_num'] = 'нет данных'
                         context['free_bed_percent'] = '-'
         else:
+            # Информация по всем отделениям на сегодня
+            #
             # общее количество записей на сегодня
             context['curr_log_num'] = AROLogModel.objects.filter(
                 reg_datetime__gte=timezone.now().date()
@@ -84,13 +86,63 @@ class Home(generic.ListView):
                 s_dyn='5'
             ).count()
 
+            # Коечный фонд
+            # !!! не работает в SQLite !!!
+            # context['total_bed_num'] = BedSpaceNumberModel.objects.distinct('mo_unit').aggregate(Sum('num'))
+            # context['total_bed_num'] = BedSpaceNumberModel.objects.aggregate(Sum('num'))
+
             # получение списка подразделений с записями на сегодня
             tml = AROLogModel.objects.filter(
                 reg_datetime__gte=timezone.now().date()
             ).values_list('mo_unit', flat=True).order_by('mo_unit').distinct()
             mou_list = []
             for m in tml:
-                mou_list.append(MOUnitModel.objects.get(pk=m))
+                mou = {
+                    'obj': MOUnitModel.objects.get(pk=m),  # подразделение
+                    'bed_num': MOUnitModel.objects.get(pk=m).get_bed_num,  # текущий коечный фонд
+                    # общее количество наблюдаемых на сегодня
+                    'curr_log_num': AROLogModel.objects.filter(
+                        reg_datetime__gte=timezone.now().date(),
+                        mo_unit=m
+                    ).count(),
+                    # общее количество свободных коек на сегодня
+                    'free_bed_num':
+                        BedSpaceNumberModel.objects.filter(mo_unit=m).latest().num
+                        -
+                        AROLogModel.objects.filter(
+                        reg_datetime__gte=timezone.now().date(),
+                        mo_unit=m
+                        ).count()
+                        +
+                        AROLogModel.objects.filter(
+                        reg_datetime__gte=timezone.now().date(),
+                        s_dyn='5',  # летальные
+                        mo_unit=m
+                        ).count(),
+                    #
+                    # количество поступлений на сегодня
+                    'curr_new_num': AROLogModel.objects.filter(
+                        reg_datetime__gte=timezone.now().date(),
+                        s_dyn='1',
+                        mo_unit=m
+                    ).count(),
+                    #
+                    # # Количество ухудшений состояний на сегодня
+                    'curr_decline_num': AROLogModel.objects.filter(
+                        reg_datetime__gte=timezone.now().date(),
+                        s_dyn='4',
+                        mo_unit=m
+                    ).count(),
+                    #
+                    # # количество летальных на сегодня
+                    'curr_lethal_num': AROLogModel.objects.filter(
+                        reg_datetime__gte=timezone.now().date(),
+                        s_dyn='5',
+                        mo_unit=m
+                    ).count()
+
+                }
+                mou_list.append(mou)
 
             context['today_mou_list'] = mou_list
 

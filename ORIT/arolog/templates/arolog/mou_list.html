@@ -1,0 +1,73 @@
+{% load bootstrap5 %}
+
+
+<div class="table-responsive">
+    <table class="table table-striped table-sm">
+    <thead>
+    <tr class="table-secondary">
+        <th scope="col" style="text-align: left;">МО, отделение</th>
+        <th scope="col" style="text-align: center;">Коек всего</th>
+        <th scope="col" style="text-align: center;">Коек свободно</th>
+        <th scope="col" style="text-align: center;">Наблюдаемых</th>
+        <th scope="col" style="text-align: center;">Новых</th>
+        <th scope="col" style="text-align: center;">С ухудш.</th>
+        <th scope="col" style="text-align: center;">Летальных</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for mou in today_mou_list %}
+
+    <tr style="text-align: center;">
+        <td style="text-align: left;">
+            <!--<a href="{{ mou.obj.get_absolute_url }}">{{mou.obj}}</a>-->
+            {{mou.obj}}
+        </td>
+        <td style="text-align: center;">
+            {{ mou.bed_num }}
+        </td>
+        <td>
+            {{ mou.free_bed_num }}
+        </td>
+        <td style="text-align: center;">
+            {{ mou.curr_log_num }}
+        </td>
+        <td style="text-align: center;">
+            {{mou.curr_new_num}}
+        </td>
+        <td style="text-align: center;">
+            {{mou.curr_decline_num}}
+        </td>
+
+        <td style="text-align: center;">
+            {{mou.curr_lethal_num}}
+        </td>
+    </tr>
+    {% endfor %}
+
+    <tr style="text-align: center;">
+        <td style="text-align: left;">
+            <strong>ВСЕГО ЗА СЕГОДНЯ</strong>
+        </td>
+        <td style="text-align: center;">
+            {{ total_bed_num.num__sum }}
+        </td>
+        <td>
+            {{ free_bed_num }}
+        </td>
+        <td style="text-align: center;">
+            {{ curr_log_num }}
+        </td>
+        <td style="text-align: center;">
+            {{curr_new_num}}
+        </td>
+        <td style="text-align: center;">
+            {{curr_decline_num}}
+        </td>
+
+        <td style="text-align: center;">
+            {{curr_lethal_num}}
+        </td>
+    </tr>
+    </tbody>
+</table>
+</div>

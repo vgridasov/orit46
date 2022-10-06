@@ -84,6 +84,9 @@ class MOUnitModel(models.Model):
     def get_absolute_url(self):
         return reverse('mou_detail', kwargs={'pk': self.pk})
 
+    def get_bed_num(self):
+        return BedSpaceNumberModel.objects.filter(mo_unit=self.pk).latest().num
+
     class Meta:
         ordering = ['sn', 'name']
         verbose_name = 'Подразделение'

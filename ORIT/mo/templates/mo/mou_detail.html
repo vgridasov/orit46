@@ -1,6 +1,14 @@
+{% extends "arolog/wrapper.html" %}
+
+{% block content %}
+
 <h4>
  {{object.mo}}: {{object.name}}<br>
 </h4>
 <hr>
- Всего записей: {{aro_logs_num}}<br>
- Сегодня: {{aro_logs_today_num}}<br>
+Коечный фонд: {% if object.get_bed_num %} {{ object.get_bed_num }} {% else %} - {% endif %}<br>
+Всего записей: {{aro_logs_num}}<br>
+Сегодня: {{aro_logs_today_num}}<br>
+
+
+{% endblock %}
