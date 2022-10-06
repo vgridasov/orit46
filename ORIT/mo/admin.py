@@ -16,6 +16,16 @@ class MOModelAdmin(admin.ModelAdmin):
     list_display_links = ('sn', 'name',)
 
 
+class MOUnitModelAdmin(admin.ModelAdmin):
+    list_display = (
+        'sn',
+        'mo',
+        'name',
+        'is_active',
+    )
+    list_display_links = ('sn', 'name',)
+
+
 class StaffModelAdmin(admin.ModelAdmin):
     list_display = (
         'mo_unit',
@@ -31,7 +41,7 @@ class StaffModelAdmin(admin.ModelAdmin):
 
 
 admin.site.register(MOModel, MOModelAdmin)
-admin.site.register(MOUnitModel)
+admin.site.register(MOUnitModel, MOUnitModelAdmin)
 admin.site.register(StaffModel, StaffModelAdmin)
 admin.site.register(BedSpaceNumberModel)
 

@@ -87,9 +87,15 @@ class Home(generic.ListView):
             ).count()
 
             # Коечный фонд
-            # !!! не работает в SQLite !!!
-            # context['total_bed_num'] = BedSpaceNumberModel.objects.distinct('mo_unit').aggregate(Sum('num'))
-            # context['total_bed_num'] = BedSpaceNumberModel.objects.aggregate(Sum('num'))
+            """ 
+            тут учитываются только подразделения, которые вносили записи сегодня!
+            есть потенциальная ошибка - если в МО ненулевой коечный фонд, но при этом сегодня не было внесено ни одной записи 
+            (например, все койки отделения свободны), то коечный фонд этого отделения не будет учтен в общей сумме!
+            подумать, как это исправить!
+            """
+
+            total_bed_num = 0
+            total_free_bed_num = 0
 
             # получение списка подразделений с записями на сегодня
             tml = AROLogModel.objects.filter(
@@ -97,6 +103,20 @@ class Home(generic.ListView):
             ).values_list('mo_unit', flat=True).order_by('mo_unit').distinct()
             mou_list = []
             for m in tml:
+                total_bed_num = total_bed_num + BedSpaceNumberModel.objects.filter(mo_unit=m).latest().num
+                total_free_bed_num = total_free_bed_num + (
+                        BedSpaceNumberModel.objects.filter(mo_unit=m).latest().num -
+                        AROLogModel.objects.filter(
+                            reg_datetime__gte=timezone.now().date(),
+                            mo_unit=m
+                        ).count() +
+                        AROLogModel.objects.filter(
+                            reg_datetime__gte=timezone.now().date(),
+                            s_dyn='5',  # летальные
+                            mo_unit=m
+                        ).count()
+                )
+
                 mou = {
                     'obj': MOUnitModel.objects.get(pk=m),  # подразделение
                     'bed_num': MOUnitModel.objects.get(pk=m).get_bed_num,  # текущий коечный фонд
@@ -143,7 +163,8 @@ class Home(generic.ListView):
 
                 }
                 mou_list.append(mou)
-
+            context['total_bed_num'] = total_bed_num
+            context['total_free_bed_num'] = total_free_bed_num
             context['today_mou_list'] = mou_list
 
         return context
@@ -239,11 +260,11 @@ class SearchResultsView(generic.ListView):
             object_list = AROLogModel.objects.filter(
                 registrator__user=self.request.user,
                 mh_num__icontains=query  # поиск по номеру истории болезни
-            ).distinct().order_by('-edit_datetime')
+            ).distinct().order_by('-reg_datetime')
         else:
             object_list = AROLogModel.objects.filter(
                 mh_num__icontains=query
-            ).distinct().order_by('mo_unit', '-edit_datetime')
+            ).distinct().order_by('mo_unit', '-reg_datetime')
 
         return object_list
 
