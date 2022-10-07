@@ -1,6 +1,4 @@
-import datetime
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Q, Sum
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.utils import timezone
@@ -89,8 +87,9 @@ class Home(generic.ListView):
             # Коечный фонд
             """ 
             тут учитываются только подразделения, которые вносили записи сегодня!
-            есть потенциальная ошибка - если в МО ненулевой коечный фонд, но при этом сегодня не было внесено ни одной записи 
-            (например, все койки отделения свободны), то коечный фонд этого отделения не будет учтен в общей сумме!
+            есть потенциальная ошибка - если в МО ненулевой коечный фонд, но при этом сегодня не было внесено 
+            ни одной записи (например, все койки отделения свободны), 
+            то коечный фонд этого отделения не будет учтен в общей сумме!
             подумать, как это исправить!
             """
 

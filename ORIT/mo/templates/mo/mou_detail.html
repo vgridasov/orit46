@@ -7,8 +7,11 @@
 </h4>
 <hr>
 Коечный фонд: {% if object.get_bed_num %} {{ object.get_bed_num }} {% else %} - {% endif %}<br>
-Всего записей: {{aro_logs_num}}<br>
-Сегодня: {{aro_logs_today_num}}<br>
-
+Свободных коек: {{ free_bed_num }} ({{ free_bed_percent }}%)<br>
+Поступивших сегодня: {{curr_new_num}}<br>
+Пациентов с ухудшением: {{curr_decline_num}}<br>
+Летальных сегодня: {{curr_lethal_num}}
+<hr>
+{% include 'arolog/object_list.html' %}
 
 {% endblock %}

@@ -3,6 +3,7 @@ import datetime
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views import generic
 from .models import BedSpaceNumberModel, StaffModel, MOUnitModel
@@ -38,7 +39,7 @@ class MOUnitModelListView(LoginRequiredMixin, generic.ListView):
         context = super().get_context_data(*args, **kwargs)
 
         context['aro_log'] = AROLogModel.objects.filter(
-            reg_datetime__date=datetime.datetime.today().date(),
+            reg_datetime__gte=timezone.now().date(),
         ).order_by('mo_unit', '-reg_datetime')
 
         return context
@@ -51,16 +52,46 @@ class MOUitDetailView(LoginRequiredMixin, generic.DetailView):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
 
-        context['aro_logs'] = AROLogModel.objects.filter(
+        context['object_list'] = AROLogModel.objects.filter(
+            reg_datetime__gte=timezone.now().date(),
             mo_unit__pk=self.object.pk
         ).order_by('-reg_datetime')
 
-        context['aro_logs_today'] = AROLogModel.objects.filter(
-            reg_datetime__date=datetime.datetime.today().date(),
-            mo_unit__pk=self.object.pk
-        ).order_by('-reg_datetime')
+        # Количество занятых коек
+        occ_bed_num = AROLogModel.objects.exclude(
+            s_dyn='5'  # Исключаем пациентов с летальным исходом
+        ).filter(
+            mo_unit__pk=self.object.pk,
+            reg_datetime__gte=timezone.now().date()
+        ).count()
 
-        context['aro_logs_num'] = context['aro_logs'].count()
-        context['aro_logs_today_num'] = context['aro_logs_today'].count()
+        # Количество свободных коек
+        if self.object.get_bed_num():
+            context['free_bed_num'] = self.object.get_bed_num() - occ_bed_num
+            context['free_bed_percent'] = round(context['free_bed_num'] / self.object.get_bed_num() * 100, 1)
+        else:
+            context['free_bed_num'] = '-'
+            context['free_bed_percent'] = '-'
+
+        # количество поступлений на сегодня
+        context['curr_new_num'] = AROLogModel.objects.filter(
+            mo_unit__pk=self.object.pk,
+            reg_datetime__gte=timezone.now().date(),
+            s_dyn='1'
+        ).count()
+
+        # Количество ухудшений состояний на сегодня
+        context['curr_decline_num'] = AROLogModel.objects.filter(
+            mo_unit__pk=self.object.pk,
+            reg_datetime__gte=timezone.now().date(),
+            s_dyn='4'
+        ).count()
+
+        # количество летальных на сегодня
+        context['curr_lethal_num'] = AROLogModel.objects.filter(
+            mo_unit__pk=self.object.pk,
+            reg_datetime__gte=timezone.now().date(),
+            s_dyn='5'
+        ).count()
 
         return context
