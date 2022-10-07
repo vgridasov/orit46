@@ -55,7 +55,7 @@ class MOUitDetailView(LoginRequiredMixin, generic.DetailView):
         context['object_list'] = AROLogModel.objects.filter(
             reg_datetime__gte=timezone.now().date(),
             mo_unit__pk=self.object.pk
-        ).order_by('-reg_datetime')
+        ).order_by('s_dyn', '-reg_datetime')
 
         # Количество занятых коек
         occ_bed_num = AROLogModel.objects.exclude(
