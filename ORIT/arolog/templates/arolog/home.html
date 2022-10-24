@@ -2,9 +2,27 @@
 
 {% block content %}
 <h6>Пользователь: {{ staff.title }} {{ staff.fio }}</h6>
-
 {% if staff.is_unit_only %}
-    <h5>{{ staff.mo_unit }}</h5>
+    <div class="bd-example-snippet bd-code-snippet">
+        <div class="bd-example">
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <strong>Внимание!</strong><br>
+                C 25.10.2022 г. в программу внесены изменения: <br>
+                теперь в текущий ежедневный отчет по состоянию на 08:00 попадают
+                и выводятся на основной странице (<i>"Мои записи (сегодня)"</i>)<br>
+                записи, <strong>внесённые после 8:00 предыдущего дня.</strong><br>
+                (Ранее выводились только записи, начиная с 00:00 текущего дня)<br>
+                Таким образом, записи, внесенные <strong>после 08:00</strong> текущего дня, <strong>будут учитываться
+                в утреннем отчете следующего дня</strong>.
+                <hr>
+                <small class="text-muted">
+                    Вы можете скрыть это сообщение, используя кнопку [X] в правом верхнем углу.
+                </small>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+<h5>{{ staff.mo_unit }}</h5>
     всего коек: {{ bed_num }}; <a href="/mo/bed/add/">[изменить]</a><br>
     занято коек: {{ occ_bed_num }}; <a href="/arolog/add/">[добавить]</a><br>
     свободных коек: {{ free_bed_num }} ({{ free_bed_percent }}%)<br>
@@ -12,6 +30,25 @@
     {% include 'arolog/object_list.html' %}
 
 {% else %}
+    <div class="bd-example-snippet bd-code-snippet">
+        <div class="bd-example">
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <strong>Внимание!</strong><br>
+                C 25.10.2022 г. в программу внесены изменения: <br>
+                теперь в текущий ежедневный отчет по состоянию на 08:00 попадают
+                и выводятся на основной странице (<i>"Главная", "Сегодня"</i>)<br>
+                записи, <strong>внесённые после 8:00 предыдущего дня.</strong><br>
+                (Ранее выводились только записи, начиная с 00:00 текущего дня)<br>
+                Таким образом, записи, внесенные <strong>после 08:00</strong> текущего дня, <strong>будут учитываться
+                в утреннем отчете следующего дня</strong>.
+                <hr>
+                <small class="text-muted">
+                    Вы можете скрыть это сообщение, используя кнопку [X] в правом верхнем углу.
+                </small>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
     <h5>Сводная информация по АРО региона</h5>
     Дата: {% now "SHORT_DATETIME_FORMAT" %}
     <hr>
