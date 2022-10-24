@@ -27,7 +27,14 @@
     <tbody>
     {% for obj in object_list %}
 
-    <tr style="text-align: center;">
+    <tr {% if obj.s_dyn == "5" %}
+        class="table-dark"
+        {% elif obj.s_dyn == '4' %}
+        class="table-danger"
+        {% elif obj.s_dyn == '1' %}
+        class="table-warning"
+        {% endif %}
+        style="text-align: center;">
         <td>
             {{ obj.edit_datetime|date:"d M y H:i" }}
         </td>
@@ -50,7 +57,9 @@
         </td>
         <td style="text-align: center;">
             {{ obj.to_unit_date|date:"d M y" }}<br>
+            <span {% if obj.get_duration_of_stay >= 5 %} class="badge bg-warning" {% endif %}>
             &nbsp;({{ obj.get_duration_of_stay }} сут.)
+            </span>
         </td>
 
         <td style="text-align: center;">

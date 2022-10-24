@@ -38,7 +38,9 @@
         </td>
 
         <td style="text-align: center;">
+            <span {% if mou.curr_lethal_num > 0 %} class="badge bg-dark" {% endif %}>
             {{mou.curr_lethal_num}}
+            </span>
         </td>
     </tr>
     {% endfor %}
