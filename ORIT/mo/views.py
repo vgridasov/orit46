@@ -4,10 +4,15 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.utils import timezone
+from datetime import timedelta
 from django.utils.decorators import method_decorator
 from django.views import generic
 from .models import BedSpaceNumberModel, StaffModel, MOUnitModel
 from arolog.models import AROLogModel
+
+
+# Timedelta value
+DELTA = -16
 
 
 @method_decorator(login_required, name='dispatch')
@@ -39,7 +44,7 @@ class MOUnitModelListView(LoginRequiredMixin, generic.ListView):
         context = super().get_context_data(*args, **kwargs)
 
         context['aro_log'] = AROLogModel.objects.filter(
-            reg_datetime__gte=timezone.now().date(),
+            reg_datetime__gte=timezone.now().date() + timedelta(hours=DELTA),
         ).order_by('mo_unit', '-reg_datetime')
 
         return context
@@ -53,7 +58,7 @@ class MOUitDetailView(LoginRequiredMixin, generic.DetailView):
         context = super().get_context_data(*args, **kwargs)
 
         context['object_list'] = AROLogModel.objects.filter(
-            reg_datetime__gte=timezone.now().date(),
+            reg_datetime__gte=timezone.now().date() + timedelta(hours=DELTA),
             mo_unit__pk=self.object.pk
         ).order_by('s_dyn', '-reg_datetime')
 
@@ -62,7 +67,7 @@ class MOUitDetailView(LoginRequiredMixin, generic.DetailView):
             s_dyn='5'  # Исключаем пациентов с летальным исходом
         ).filter(
             mo_unit__pk=self.object.pk,
-            reg_datetime__gte=timezone.now().date()
+            reg_datetime__gte=timezone.now().date() + timedelta(hours=DELTA)
         ).count()
 
         # Количество свободных коек
@@ -76,21 +81,21 @@ class MOUitDetailView(LoginRequiredMixin, generic.DetailView):
         # количество поступлений на сегодня
         context['curr_new_num'] = AROLogModel.objects.filter(
             mo_unit__pk=self.object.pk,
-            reg_datetime__gte=timezone.now().date(),
+            reg_datetime__gte=timezone.now().date() + timedelta(hours=DELTA),
             s_dyn='1'
         ).count()
 
         # Количество ухудшений состояний на сегодня
         context['curr_decline_num'] = AROLogModel.objects.filter(
             mo_unit__pk=self.object.pk,
-            reg_datetime__gte=timezone.now().date(),
+            reg_datetime__gte=timezone.now().date() + timedelta(hours=DELTA),
             s_dyn='4'
         ).count()
 
         # количество летальных на сегодня
         context['curr_lethal_num'] = AROLogModel.objects.filter(
             mo_unit__pk=self.object.pk,
-            reg_datetime__gte=timezone.now().date(),
+            reg_datetime__gte=timezone.now().date() + timedelta(hours=DELTA),
             s_dyn='5'
         ).count()
 

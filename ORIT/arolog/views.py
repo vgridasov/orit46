@@ -10,7 +10,7 @@ from mo.models import StaffModel, BedSpaceNumberModel, MOUnitModel
 
 
 # Timedelta value
-DELTA = -8
+DELTA = -16
 
 
 def index(request):
