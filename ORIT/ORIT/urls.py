@@ -20,5 +20,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
     path('mo/', include('mo.urls')),
+    path('onmkstat/', include('onmkstat.urls')),
     path('', include('arolog.urls'))
 ]

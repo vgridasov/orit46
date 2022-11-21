@@ -1,0 +1,11 @@
+{% if question_list %}
+    <ul>
+    {% for question in question_list %}
+        <li>
+            {{ question.sn }}&nbsp;{{ question.title }}
+        </li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>Показателей для отчета не найдено.</p>
+{% endif %}
