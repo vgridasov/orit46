@@ -17,7 +17,7 @@ class Question(models.Model):
     is_active = models.BooleanField(default=True, verbose_name='Действующий')
 
     def __str__(self):
-        return '%s: %s' % (self.sn, self.title)
+        return '%s\t %s' % (self.sn, self.title)
 
     class Meta:
         ordering = ['sn']
@@ -48,15 +48,18 @@ class OnmkStat(models.Model):
         ('2031', '2031'),
         ('2032', '2032'),
     ]
+    # проверка текущего года: если выходит за пределы разрешенных,
+    # то по умолчанию устанавливается первое значение в списке выбираемых
     if datetime.datetime.now().strftime("%Y") in YEAR_CHOICES:
         curr_year = datetime.datetime.now().strftime("%Y")
     else:
-        curr_year = YEAR_CHOICES[0]
+        curr_year = YEAR_CHOICES[0][0]
 
     rep_year = models.CharField(
         max_length=4,
         choices=YEAR_CHOICES,
-        default=curr_year
+        default=curr_year,
+        verbose_name='Отчётный год'
     )
 
     MONTH_CHOICES = [
@@ -72,14 +75,12 @@ class OnmkStat(models.Model):
         ('10', 'Октябрь'),
         ('11', 'Ноябрь'),
         ('12', 'Декабрь'),
-
     ]
-
-    default_month = datetime.datetime.now()
     rep_month = models.CharField(
-        max_length=3,
+        max_length=2,
         choices=MONTH_CHOICES,
-        default=default_month.strftime("%m")
+        default=datetime.datetime.now().strftime("%m"), # значение по умолчанию - текущий месяц
+        verbose_name='Отчётный месяц'
     )
 
     mo_unit = models.ForeignKey(
